@@ -17,7 +17,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
     var todos: Array<String> = []
     
     let userDefaults = UserDefaults.standard
-    
+    var alertController: UIAlertController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +25,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
         tableView.dataSource = self
         textField.delegate = self
         textField.placeholder = "買う物を入力"
+        textField.clearButtonMode = UITextField.ViewMode.always //つねにクリアボタンの表示
         if let a = userDefaults.object(forKey: "todos") {
             todos = a as! Array<String>
         }   
@@ -36,7 +37,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
         
     }
     
-    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+           return 50
+       }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { // セルの数
         return todos.count
@@ -71,15 +74,20 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
         }
     }
     
+//TextField以外の部分をタッチするとキーボード閉じる
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {// returnキーを押した時の処理
         if let text = self.textField.text {
+            textField.resignFirstResponder()
             todos.append(text)
             userDefaults.set(todos, forKey: "todos")
             userDefaults.synchronize()
             todos = userDefaults.object(forKey: "todos") as! Array<String>
         }
-        
-        self.textField.text = ""
+        self.textField.text = ""// TextFieldの中身をクリア
         self.tableView.reloadData() //データをリロードする
         return true
     }
