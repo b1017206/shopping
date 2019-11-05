@@ -57,19 +57,29 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
         return cell
     }
     
-    
+    //セルの編集許可
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool
+    {
+        return true
+    }
+
+    //スワイプしたセルを削除
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == UITableViewCell.EditingStyle.delete {
+            todos.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath as IndexPath], with: UITableView.RowAnimation.automatic)
+        }
+    }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {// returnキーを押した時の処理
         if let text = self.textField.text {
             todos.append(text)
             userDefaults.set(todos, forKey: "todos")
             userDefaults.synchronize()
-            
             todos = userDefaults.object(forKey: "todos") as! Array<String>
         }
         
         self.textField.text = ""
-        
         self.tableView.reloadData() //データをリロードする
         return true
     }
