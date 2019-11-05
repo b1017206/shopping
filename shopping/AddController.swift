@@ -10,7 +10,7 @@ import UIKit
 
 class AddController: UIViewController {
 
-    @IBOutlet weak var textField: UITextField!
+  
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -22,15 +22,7 @@ class AddController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func addPressed(_ sender: UIButton) {
-        
-        if (textField.text != nil) && textField.text != ""{
-            todoList?.append(textField.text!)
-            textField.text = ""
-            textField.placeholder = "Add more ?"
-        }
-    }
-    
+  
 }
     /*
     // MARK: - Navigation
@@ -42,4 +34,4 @@ class AddController: UIViewController {
     }
     */
 
-}
+
