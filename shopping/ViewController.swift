@@ -8,67 +8,72 @@
 
 import UIKit
  
-class ViewController: UIViewController, UITextFieldDelegate  {
- 
-    @IBOutlet var textField:UITextField!
-    @IBOutlet var label:UILabel!
- 
-    var testText:String = "default"
+class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSource{
  
  
-    // UserDefaults のインスタンス
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var textField: UITextField!
+    
+    var todos: Array<String> = []
+    
     let userDefaults = UserDefaults.standard
- 
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
- 
-        // textFiel の情報を受け取るための delegate を設定
+        
+        tableView.dataSource = self
+        
         textField.delegate = self
- 
-        // デフォルト値
-        userDefaults.register(defaults: ["DataStore": "default"])
- 
-        label.text = readData()
+        
+        if let aaa = userDefaults.object(forKey: "todos") {
+            todos = aaa as! Array<String>
+        }   
  
     }
  
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool{
- 
-        testText = textField.text!
- 
-        label.text = testText
- 
-        // キーボードを閉じる
-        textField.resignFirstResponder()
- 
-        saveData(str: testText)
- 
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        
+    }
+    
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { // セルの数
+        return todos.count
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {// セクションの数
+        return 1
+    }
+    
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {// セルの内容を決める。
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        
+        let todo = todos[indexPath.row]
+        
+        cell.textLabel?.text = todo
+        
+        return cell
+    }
+    
+    
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {// returnキーを押した時の処理
+        if let text = self.textField.text {
+            todos.append(text)
+            userDefaults.set(todos, forKey: "todos")
+            userDefaults.synchronize()
+            
+            todos = userDefaults.object(forKey: "todos") as! Array<String>
+        }
+        
+        self.textField.text = ""
+        
+        self.tableView.reloadData() //データをリロードする
         return true
     }
- 
-    func saveData(str: String){
- 
-        // Keyを指定して保存
-        userDefaults.set(str, forKey: "DataStore")
-        userDefaults.synchronize()
- 
-    }
- 
-    func readData() -> String {
-        // Keyを指定して読み込み
-        let str: String = userDefaults.object(forKey: "DataStore") as! String
- 
-        return str
-    }
- 
- 
-    @IBAction func buttonTapped(_ sender : AnyObject) {
-        // Key の値を削除
-        userDefaults.removeObject(forKey: "DataStore")
- 
-        // Keyを指定して読み込み
-        let str: String = userDefaults.object(forKey: "DataStore") as! String
- 
-        label.text = str
-    }
+    
+    
 }
