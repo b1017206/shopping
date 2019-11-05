@@ -23,9 +23,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
         super.viewDidLoad()
         
         tableView.dataSource = self
-        
         textField.delegate = self
-        
+        textField.placeholder = "買う物を入力"
         if let aaa = userDefaults.object(forKey: "todos") {
             todos = aaa as! Array<String>
         }   
